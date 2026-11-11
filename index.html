@@ -73,10 +73,24 @@ input[type=number],input[type=text]{padding:13px;border:1px solid #cfcbdc;border
  </div>
 </section>
 
+
+<section id="routePicker" class="entry hidden">
+ <div class="entry-card">
+  <div class="entry-crown">🧭</div>
+  <h2>Choose your learning route</h2>
+  <p>How would you like to progress through the three learning journeys?</p>
+  <button class="entry-action" onclick="chooseRoute('fixed')">🔒 Fixed Route</button>
+  <div class="small">Complete Age 8, then Age 10, then Age 12. The next journey unlocks only after all seven topics are mastered.</div>
+  <button class="entry-action alt" onclick="chooseRoute('flexi')">🌈 Flexi Route</button>
+  <div class="small">Choose between Age 8, Age 10 and Age 12 whenever you like.</div>
+  <div class="entry-note">You can change your route later. Your completed topics and gemstones stay saved on this device.</div>
+ </div>
+</section>
 <div id="appShell" class="hidden">
 <main>
  <aside class="side">
   <div class="topline"><b>Your learning space</b><span id="guestPill" class="guest-pill">Guest mode</span></div>
+  <button class="btn secondary" style="width:100%;margin:0" onclick="changeRoute()">Change learning route</button>
   <div class="crown"><div class="emoji">👑</div><b>Your Crown</b><div class="gems"><span id="gem0" class="gem">💎</span><span id="gem1" class="gem">💎</span><span id="gem2" class="gem">💎</span></div><div class="small">Earn one gemstone by mastering each age-level journey.</div></div>
   <div class="small">Chapter progress</div><div class="progress"><span id="overall"></span></div><div class="small" id="progressText">0 of 21 milestones mastered</div>
   <nav id="nav"></nav>
@@ -88,6 +102,7 @@ input[type=number],input[type=text]{padding:13px;border:1px solid #cfcbdc;border
    <p>A percentage is a way of saying <b>“out of 100”</b>. Choose a learning journey and explore the seven topic gates.</p>
    <div class="row"><div class="stat"><b>🟢 Age 8</b><span class="small">Little Explorer</span></div><div class="stat"><b>🔵 Age 10</b><span class="small">Number Adventurer</span></div><div class="stat"><b>🟣 Age 12</b><span class="small">Master Champion</span></div></div>
    <div class="callout">Complete all seven topic gates in a journey with <b>100% mastery</b>. Then your gemstone is added to the crown.</div>
+   <div id="flexiAgePicker" class="hidden"></div>
    <h3>Your seven topic gates</h3><p>Understanding percentage · Fractions and percentage · Percentage of an amount · Word problems · Increase and decrease · Profit and loss · Discount</p>
    <button class="btn" onclick="openTopic(0)">Begin the quest →</button>
   </div>
@@ -132,8 +147,10 @@ const topics=[
  ],method:["Find marked price and selling price or discount rate.","Discount = marked price − selling price.","Discount% = discount ÷ marked price × 100."]}
 ];
 const ageNames=["Little Explorer","Number Adventurer","Master Champion"];
-const state=JSON.parse(localStorage.getItem("pctKingdom")||'{"done":{},"best":{}}');
+const state=JSON.parse(localStorage.getItem("pctKingdom")||'{"done":{},"best":{},"route":null}');
+if(!("route" in state)) state.route=null;
 let currentTopic=0,currentAge=0,questions=[],qIndex=0,correct=0,answered=false;
+let learningRoute=state.route||null;
 const $=id=>document.getElementById(id);
 function save(){localStorage.setItem("pctKingdom",JSON.stringify(state));renderNav();updateCrown()}
 function key(){return currentAge+"-"+currentTopic}
@@ -152,7 +169,9 @@ function openTopic(i){
 function renderLesson(){
  let t=topics[currentTopic],done=completed(key()),el=$("lesson");
  el.innerHTML=`<span class="tag">TOPIC ${currentTopic+1} OF 7</span><h2>${t.name}</h2><p class="muted">Source focus: ${t.source}</p>
- <div class="levels">${ageNames.map((n,i)=>`<button class="${i===currentAge?'active':''}" onclick="setAge(${i})">${['🟢','🔵','🟣'][i]} ${n} · Age ${[8,10,12][i]}</button>`).join('')}</div>
+ <div class="levels">${learningRoute==='flexi'
+ ? ageNames.map((n,i)=>`<button class="${i===currentAge?'active':''}" onclick="setAge(${i})">${['🟢','🔵','🟣'][i]} ${n} · Age ${[8,10,12][i]}</button>`).join('')
+ : `<div class="callout"><b>🔒 Fixed Route · Age ${[8,10,12][currentAge]} — ${ageNames[currentAge]}</b><br><span class="small">Complete all seven topics at this age to unlock the next journey.</span></div>`}</div>
  <h3>1. Discover and understand</h3><div class="callout">${t.teach[currentAge][0]}</div>
  <h3>2. Learn it step by step</h3><p>${t.teach[currentAge][1]}</p><p>${t.teach[currentAge][2]}</p>
  <div class="diagram">${Array.from({length:10},(_,i)=>`<span class="unit ${i<5?'on':''}"></span>`).join('')}<span class="small">5 of 10 equal parts = 50%. The same proportion is 50 of 100 = 50%.</span></div>
@@ -161,7 +180,10 @@ function renderLesson(){
  <p class="footer">${done?'💎 This topic is mastered. You can practise again to strengthen your skills.':'This gate is not yet mastered. Keep practising until you score 100%.'}</p>`;
  startRound();
 }
-function setAge(a){currentAge=a;renderNav();renderLesson()}
+function setAge(a){
+ if(learningRoute!=="flexi") return;
+ currentAge=a;renderNav();renderLesson();
+}
 const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
 function makeQ(){
  let t=currentTopic, a=currentAge, x,y,p,ans,question,ex;
@@ -196,15 +218,44 @@ function nextQ(){
  else{box.innerHTML=`<h3>Score: ${correct}/5 · ${correct*20}%</h3><p>You need 100% to open this gate. No problem — every new round gives you fresh questions.</p><button class="btn" onclick="startRound()">Try a fresh round</button>`}
  renderNav();updateCrown();
 }
-function nextTopic(){let n=topics.findIndex((_,i)=>i>currentTopic&&!completed(currentAge+"-"+i));if(n<0)n=0;openTopic(n)}
+function nextTopic(){
+ let n=topics.findIndex((_,i)=>!completed(currentAge+"-"+i));
+ if(n>=0){openTopic(n);return;}
+ if(learningRoute==="fixed" && currentAge<2){
+   currentAge++;
+   openTopic(0);
+   $("lesson").insertAdjacentHTML("afterbegin",`<div class="callout good"><b>🎉 Age ${[8,10,12][currentAge-1]} journey completed!</b> You have unlocked Age ${[8,10,12][currentAge]}.</div>`);
+   return;
+ }
+ if(currentAge===2 && topics.every((_,i)=>completed("2-"+i))){
+   $("lesson").insertAdjacentHTML("afterbegin",`<div class="callout good"><b>👑 Golden Crown achieved!</b> You have mastered all three journeys.</div>`);
+ }
+}
+function chooseRoute(route){
+ learningRoute=route;state.route=route;save();
+ $("routePicker").classList.add("hidden");$("appShell").classList.remove("hidden");
+ $("guestPill").textContent="Guest mode · "+(route==="fixed"?"Fixed":"Flexi")+" route";
+ currentAge=route==="fixed" ? firstIncompleteAge() : 0;
+ $("welcome").classList.remove("hidden");$("lesson").classList.add("hidden");
+ renderNav();updateCrown();
+ if(route==="flexi"){
+  $("flexiAgePicker").classList.remove("hidden");
+  $("flexiAgePicker").innerHTML=`<div class="callout"><b>Choose your age journey:</b><div class="levels">${ageNames.map((n,i)=>`<button onclick="setAge(${i});openTopic(0)">${['🟢','🔵','🟣'][i]} Age ${[8,10,12][i]}</button>`).join('')}</div></div>`;
+ } else { $("flexiAgePicker").classList.add("hidden"); $("flexiAgePicker").innerHTML=""; }
+}
+function firstIncompleteAge(){
+ for(let a=0;a<3;a++) if(!topics.every((_,i)=>completed(a+"-"+i))) return a;
+ return 2;
+}
+function changeRoute(){
+ $("appShell").classList.add("hidden");$("routePicker").classList.remove("hidden");
+}
+function enterGuest(){
+ $("entry").classList.add("hidden");
+ $("routePicker").classList.remove("hidden");
+ $("appShell").classList.add("hidden");
+}
+function showLoginInfo(){ $("loginInfo").classList.remove("hidden"); }
 renderNav();updateCrown();
 
-function enterGuest(){
- document.getElementById("entry").classList.add("hidden");
- document.getElementById("appShell").classList.remove("hidden");
- document.getElementById("guestPill").textContent="Guest mode";
- document.getElementById("welcome").classList.remove("hidden");
- document.getElementById("lesson").classList.add("hidden");
-}
-function showLoginInfo(){document.getElementById("loginInfo").classList.remove("hidden");}
 </script></body></html>
