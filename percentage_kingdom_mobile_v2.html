@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#29264f">
+<title>The Percentage Kingdom | Chapter 8</title>
+<style>
+:root{--ink:#20243a;--muted:#687083;--paper:#fffdf8;--purple:#5b4b9a;--gold:#e5ad37;--mint:#dff4e8;--line:#e8e5dc;--lav:#f3f0fb}
+*{box-sizing:border-box}body{margin:0;background:#f5f3ed;color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
+button,input{font:inherit}button{touch-action:manipulation}
+.hero{background:linear-gradient(125deg,#25284d,#594a91);color:#fff;padding:25px max(18px,calc((100% - 1100px)/2)) 28px}
+.hero h1{font-size:clamp(25px,4vw,38px);line-height:1.15;margin:0 0 7px}.hero p{margin:0;color:#e7e4f5}
+.entry{max-width:480px;margin:32px auto;padding:0 16px 40px}.entry-card,.panel,.side{background:white;border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 5px 20px #24213a0a}
+.entry-card{text-align:center;padding:26px 22px}.entry-crown{font-size:58px;line-height:1.2}.entry-card h2{margin:8px 0 2px}.entry-card>p{color:var(--muted);margin:0 0 20px}
+.entry-action{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:15px;border:0;border-radius:13px;background:var(--purple);color:#fff;font-weight:700;cursor:pointer;margin-top:11px;min-height:52px}
+.entry-action.alt{background:#f1eef9;color:#3d365e;border:1px solid #e2dced}
+.entry-note{font-size:12px;color:var(--muted);margin-top:16px}
+.login-fields{display:grid;gap:8px;text-align:left;margin-top:18px}.login-fields label{font-size:13px;font-weight:700}.login-fields input{width:100%;padding:13px;border:1px solid #d8d4e1;border-radius:10px}
+.hidden{display:none!important}
+main{max-width:1120px;margin:22px auto;padding:0 16px 42px;display:grid;grid-template-columns:270px minmax(0,1fr);gap:18px}
+.side{align-self:start;position:sticky;top:12px}.crown{text-align:center;padding:5px 0 15px}.crown .emoji{font-size:43px;filter:drop-shadow(0 3px 2px #d5b45b)}
+.gems{display:flex;justify-content:center;gap:10px;margin:7px}.gem{font-size:24px;opacity:.24;filter:grayscale(1)}.gem.earned{opacity:1;filter:none;animation:shine 1.7s infinite alternate}
+@keyframes shine{from{filter:drop-shadow(0 0 1px #fff)}to{filter:drop-shadow(0 0 9px #ffc94a) brightness(1.2)}}
+.progress{height:9px;background:#eeeaf5;border-radius:20px;overflow:hidden}.progress span{display:block;height:100%;background:linear-gradient(90deg,#72c79c,#e6b847);width:0}
+.small{font-size:13px;color:var(--muted)}nav{display:grid;gap:7px;margin-top:14px}nav button,.btn{border:0;border-radius:11px;padding:11px 12px;text-align:left;background:#f5f3fa;color:var(--ink);cursor:pointer}
+nav button.active{background:#eae5fa;outline:2px solid #bdb0e8}
+.content{display:grid;gap:16px;min-width:0}.panel h2{margin:0 0 8px;font-size:24px}.panel h3{margin:18px 0 6px}.tag{display:inline-block;background:#f1edfb;color:#51418d;padding:4px 9px;border-radius:20px;font-size:12px;font-weight:700}
+.levels{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.levels button{background:#f2f0eb;border:1px solid var(--line);padding:10px 14px;border-radius:30px;cursor:pointer;min-height:43px}.levels button.active{background:#51418d;color:white}
+.callout{background:#f7f5ff;border-left:4px solid #8a78c7;padding:13px 14px;border-radius:9px;margin:12px 0}
+.diagram{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:15px 0;padding:15px;background:#fbfaf6;border-radius:12px}
+.unit{width:36px;height:36px;border-radius:8px;background:#e8e5f0;border:1px solid #d5d0e2}.unit.on{background:#75c99d;border-color:#55aa7d}
+.steps{padding-left:22px}.steps li{margin:7px 0}.practice{background:#fffaf0;border:1px solid #f1dfb7;border-radius:14px;padding:16px}
+input[type=number],input[type=text]{padding:13px;border:1px solid #cfcbdc;border-radius:10px;font:inherit;width:min(100%,260px);min-height:48px}
+.btn{background:var(--purple);color:white;text-align:center;padding:12px 17px;margin:6px 5px 0 0;min-height:46px}.btn.secondary{background:#eeeaf5;color:#39334f}
+.feedback{margin-top:10px;font-weight:650}.good{color:#18824f}.bad{color:#b44747}.muted{color:var(--muted)}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.stat{background:#f7f6f2;border-radius:12px;padding:10px 14px;min-width:110px;flex:1}.stat b{display:block;font-size:19px}
+.footer{font-size:12px;color:#777;margin-top:14px}.topline{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.guest-pill{font-size:12px;background:#e9f4ec;color:#276b45;border-radius:30px;padding:5px 10px;font-weight:700}
+@media(max-width:760px){
+ body{padding-bottom:env(safe-area-inset-bottom)}.hero{padding:19px 17px 21px}.hero h1{font-size:26px}
+ main{display:flex;flex-direction:column;margin:12px auto;padding:0 12px 30px;gap:12px}
+ .side{position:static;padding:12px 13px;border-radius:16px}
+ .crown{display:grid;grid-template-columns:auto 1fr;align-items:center;text-align:left;column-gap:10px;padding:0 0 10px}
+ .crown .emoji{grid-row:span 2;font-size:35px}.crown b{align-self:end}.crown .gems{justify-content:flex-start;margin:0}
+ .crown .small{grid-column:1/-1;margin-top:5px}
+ nav{display:flex;overflow-x:auto;gap:7px;margin:10px -3px 0;padding:2px 3px 5px;scrollbar-width:thin}
+ nav button{white-space:nowrap;flex:0 0 auto;font-size:13px;padding:10px 12px}
+ .content{gap:12px}.panel{padding:16px;border-radius:16px}.panel h2{font-size:22px}
+ .levels{display:grid;grid-template-columns:1fr;gap:7px}.levels button{text-align:left;width:100%}
+ .diagram{gap:5px;padding:12px}.unit{width:29px;height:29px;border-radius:6px}
+ .practice{padding:13px}.practice input[type=number]{width:100%;max-width:none}
+ .btn{min-height:49px}.stat{min-width:calc(50% - 8px)}
+ .entry{margin:18px auto}.entry-card{padding:23px 18px}
+}
+@media(max-width:360px){.hero h1{font-size:23px}.unit{width:25px;height:25px}.stat{min-width:100%}}
+</style></head>
+<body>
+<header class="hero"><h1>🏰 The Percentage Kingdom</h1><p>Chapter 8 · Percentage and its Applications</p></header>
+
+<section id="entry" class="entry">
+ <div class="entry-card">
+  <div class="entry-crown">👑</div>
+  <h2>Welcome, Explorer!</h2>
+  <p>Your mathematics adventure starts here.</p>
+  <button class="entry-action" onclick="enterGuest()">Continue as Guest</button>
+  <button class="entry-action alt" onclick="document.getElementById('loginPanel').classList.toggle('hidden')">Learner Login</button>
+  <div id="loginPanel" class="login-fields hidden">
+   <label for="username">Username</label><input id="username" autocomplete="username" placeholder="Your username">
+   <label for="password">Password</label><input id="password" type="password" autocomplete="current-password" placeholder="Your password">
+   <button class="entry-action" onclick="showLoginInfo()">Log in</button>
+   <div id="loginInfo" class="callout hidden" role="status">Secure learner accounts are the next setup step. The login screen is ready, but account authentication is not connected yet. Please use Guest mode for this version.</div>
+  </div>
+  <div class="entry-note">No public sign-up. Learner accounts will be created by the administrator.</div>
+ </div>
+</section>
+
+<div id="appShell" class="hidden">
+<main>
+ <aside class="side">
+  <div class="topline"><b>Your learning space</b><span id="guestPill" class="guest-pill">Guest mode</span></div>
+  <div class="crown"><div class="emoji">👑</div><b>Your Crown</b><div class="gems"><span id="gem0" class="gem">💎</span><span id="gem1" class="gem">💎</span><span id="gem2" class="gem">💎</span></div><div class="small">Earn one gemstone by mastering each age-level journey.</div></div>
+  <div class="small">Chapter progress</div><div class="progress"><span id="overall"></span></div><div class="small" id="progressText">0 of 21 milestones mastered</div>
+  <nav id="nav"></nav>
+  <p class="footer">Guest progress is saved in this browser on this device.</p>
+ </aside>
+ <section class="content">
+  <div class="panel" id="welcome">
+   <span class="tag">YOUR ADVENTURE STARTS HERE</span><h2>Welcome to your learning kingdom!</h2>
+   <p>A percentage is a way of saying <b>“out of 100”</b>. Choose a learning journey and explore the seven topic gates.</p>
+   <div class="row"><div class="stat"><b>🟢 Age 8</b><span class="small">Little Explorer</span></div><div class="stat"><b>🔵 Age 10</b><span class="small">Number Adventurer</span></div><div class="stat"><b>🟣 Age 12</b><span class="small">Master Champion</span></div></div>
+   <div class="callout">Complete all seven topic gates in a journey with <b>100% mastery</b>. Then your gemstone is added to the crown.</div>
+   <h3>Your seven topic gates</h3><p>Understanding percentage · Fractions and percentage · Percentage of an amount · Word problems · Increase and decrease · Profit and loss · Discount</p>
+   <button class="btn" onclick="openTopic(0)">Begin the quest →</button>
+  </div>
+  <div class="panel hidden" id="lesson"></div>
+ </section>
+</main>
+</div>
+<script>
+const topics=[
+ {name:"What is a percentage?",source:"A fraction whose denominator is 100 is called percent.",teach:[
+ ["Imagine 100 little squares. If 25 are coloured, that is 25 out of 100 — or 25%.","25% means 25 of every 100. Think of a 100-square chocolate bar: colour 25 squares.","Percent means per hundred. Write a percentage as a fraction over 100: p% = p/100."],
+ ["25% is one quarter. If 1 out of 4 equal parts is selected, that is 25%.","25/100 simplifies to 1/4. 50% = 1/2 and 75% = 3/4.","Convert percent to fraction by writing it over 100 and simplifying. To compare, express values in a common form."]
+ ],method:["Percent means 'out of 100'.","The symbol % is read as 'percent'.","For example, 40% means 40/100." ]},
+ {name:"Fractions to percentages",source:"To convert a fraction into percent, make its denominator 100. Multiply numerator and denominator by the same number.",teach:[
+ ["A fraction is a part of a whole. To make it a percentage, ask: how many parts would it be out of 100?","Multiply the fraction by 100. For example, 3/4 = 75%.","Use (numerator ÷ denominator) × 100. To change p% to a fraction, write p/100 and simplify."],
+ ["For 1/2, make 100 by multiplying top and bottom by 50: 50/100 = 50%.","For 3/5, multiply top and bottom by 20: 60/100 = 60%.","If the denominator does not divide 100 neatly, calculate numerator ÷ denominator × 100. Decimal answers may be approximate."]
+ ],method:["To convert a fraction to percent: (fraction) × 100%.","To convert percent to fraction: write it over 100, then simplify.","Example: 45% = 45/100 = 9/20."]},
+ {name:"Percentage of an amount",source:"Find a specific percent of a given amount by multiplying the amount by the percent and dividing by 100.",teach:[
+ ["If you have 10 sweets and 50% are red, half are red: 5 sweets.","Find 10% by dividing by 10. Find 50% by halving. Find 25% by quartering.","Use amount × percent ÷ 100. Example: 15% of ₹1,500 = 1,500 × 15 ÷ 100 = ₹225."],
+ ["25% means one quarter. So 25% of 240 = 240 ÷ 4 = 60.","Convert the percent to a fraction or multiply by the percent and divide by 100.","To find the whole when a part and its percent are known: whole = part × 100 ÷ percent."],
+ ["Choose a shortcut when possible, or use amount × rate/100.","For reverse percentage, identify the known part and its rate before rearranging.","Check by calculating the percentage of your answer; it should return the given part."]
+ ],method:["Write the amount.","Multiply by the percentage number.","Divide by 100."]},
+ {name:"Percentage word problems",source:"The chapter uses percentage to compare a part with a whole, including marks and quantities.",teach:[
+ ["If 2 out of 10 balloons are blue, 2/10 are blue. That is 20%.","Ask: what is the part? What is the whole? Then compare them.","Required percentage = (part ÷ whole) × 100."],
+ ["Example: 45 rupees out of 75 rupees. 45 ÷ 75 × 100 = 60%.","Keep units the same when comparing quantities (kg with kg, rupees with rupees).","For marks: percentage = marks obtained ÷ maximum marks × 100."],
+ ["Read the question and identify the unknown: part, whole, or percentage.","If percentage and part are known: whole = part × 100 ÷ percentage.","If whole and percentage are known: part = whole × percentage ÷ 100."]
+ ],method:["Find the part and the whole.","Divide part by whole.","Multiply by 100 and include the % sign."]},
+ {name:"Increase and decrease",source:"The chapter applies percentage to increases and reductions, including reverse comparisons.",teach:[
+ ["A price goes up when it increases and goes down when it decreases.","10% of 100 is 10. A 10% increase makes 110; a 10% decrease makes 90.","New amount after increase = original × (100 + rate)/100. After decrease = original × (100 − rate)/100."],
+ ["Start with 100. A 20% increase gives 120; a 20% decrease gives 80.","A percentage change is calculated using the original amount as the base.","For a reverse problem, undo the multiplier: original = new amount × 100 ÷ (100 ± rate)."],
+ ["If x is 20% more than y, take y = 100, so x = 120. Then compare y with x: 100/120 × 100 = 83⅓%.","A 20% increase followed by a 20% decrease does not return to the starting value.","Write the base clearly. '20% of the original' and '20% of the new value' are different."]
+ ],method:["Calculate the percentage change.","Add it to the original for an increase, or subtract for a decrease.","For reverse questions, divide by the appropriate multiplier."]},
+ {name:"Profit and loss",source:"Cost price (CP), selling price (SP), overhead charges, profit/loss amount and percentages. Profit/loss percentage is based on cost price.",teach:[
+ ["If you buy a toy for ₹10 and sell it for ₹12, you gain ₹2. That is profit.","If you buy for ₹10 and sell for ₹8, you lose ₹2. That is loss.","Profit = SP − CP. Loss = CP − SP."],
+ ["Profit% = profit ÷ CP × 100. Loss% = loss ÷ CP × 100.","If CP is ₹100 and profit is 10%, SP is ₹110.","SP at profit = CP × (100 + profit%)/100. SP at loss = CP × (100 − loss%)/100."],
+ ["Include overhead/repair charges in the effective cost where the problem requires it.","If SP and profit/loss rate are known, reverse the formula to find CP.","Check the base: profit and loss percentages are calculated on cost price, not selling price."]
+ ],method:["Find CP and SP.","Compare: SP above CP = profit; SP below CP = loss.","Divide profit/loss by CP and multiply by 100."]},
+ {name:"Discount",source:"Marked price is the printed price. Discount is the reduction. The amount paid is the selling price. Discount percentage is based on marked price.",teach:[
+ ["A shop label says ₹100. The shop gives ₹10 off. You pay ₹90.","Marked price (MP) is the label price. Discount is the amount taken off. Selling price is what you pay.","Discount = MP − SP. Selling price = MP − discount."],
+ ["15% off ₹1,200 means discount = ₹180, so the customer pays ₹1,020.","Discount% = discount ÷ marked price × 100.","Selling price after discount = MP × (100 − discount%)/100."],
+ ["Example: MP ₹1,150 and SP ₹950. Discount = ₹200; discount% = 200/1,150 × 100 ≈ 17.4%.","The marked price is the base for discount percentage.","Check: marked price minus discount should equal selling price."]
+ ],method:["Find marked price and selling price or discount rate.","Discount = marked price − selling price.","Discount% = discount ÷ marked price × 100."]}
+];
+const ageNames=["Little Explorer","Number Adventurer","Master Champion"];
+const state=JSON.parse(localStorage.getItem("pctKingdom")||'{"done":{},"best":{}}');
+let currentTopic=0,currentAge=0,questions=[],qIndex=0,correct=0,answered=false;
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem("pctKingdom",JSON.stringify(state));renderNav();updateCrown()}
+function key(){return currentAge+"-"+currentTopic}
+function completed(k){return !!state.done[k]}
+function renderNav(){
+ const nav=$("nav");nav.innerHTML="";
+ topics.forEach((t,i)=>{let b=document.createElement("button");b.textContent=(completed(currentAge+"-"+i)?"💎 ":"🔒 ") +(i+1)+". "+t.name;b.className=i===currentTopic?"active":"";b.onclick=()=>openTopic(i);nav.appendChild(b)});
+}
+function updateCrown(){
+ let count=0;for(let a=0;a<3;a++){let all=topics.every((_,i)=>state.done[a+"-"+i]);$("gem"+a).classList.toggle("earned",all);if(all)count++}
+ let done=Object.keys(state.done).length;$("overall").style.width=(done/21*100)+"%";$("progressText").textContent=done+" of 21 milestones mastered · "+count+"/3 gemstones";
+}
+function openTopic(i){
+ currentTopic=i;$("welcome").classList.add("hidden");$("lesson").classList.remove("hidden");renderNav();renderLesson();
+}
+function renderLesson(){
+ let t=topics[currentTopic],done=completed(key()),el=$("lesson");
+ el.innerHTML=`<span class="tag">TOPIC ${currentTopic+1} OF 7</span><h2>${t.name}</h2><p class="muted">Source focus: ${t.source}</p>
+ <div class="levels">${ageNames.map((n,i)=>`<button class="${i===currentAge?'active':''}" onclick="setAge(${i})">${['🟢','🔵','🟣'][i]} ${n} · Age ${[8,10,12][i]}</button>`).join('')}</div>
+ <h3>1. Discover and understand</h3><div class="callout">${t.teach[currentAge][0]}</div>
+ <h3>2. Learn it step by step</h3><p>${t.teach[currentAge][1]}</p><p>${t.teach[currentAge][2]}</p>
+ <div class="diagram">${Array.from({length:10},(_,i)=>`<span class="unit ${i<5?'on':''}"></span>`).join('')}<span class="small">5 of 10 equal parts = 50%. The same proportion is 50 of 100 = 50%.</span></div>
+ <h3>3. Remember the method</h3><ol class="steps">${t.method.map(s=>`<li>${s}</li>`).join('')}</ol>
+ <div class="practice"><h3>4. Mastery challenge</h3><p>Answer 5 fresh questions. You need <b>5 out of 5 (100%)</b> to master this gate. If you miss one, practise a new round.</p><div id="quiz"></div></div>
+ <p class="footer">${done?'💎 This topic is mastered. You can practise again to strengthen your skills.':'This gate is not yet mastered. Keep practising until you score 100%.'}</p>`;
+ startRound();
+}
+function setAge(a){currentAge=a;renderNav();renderLesson()}
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+function makeQ(){
+ let t=currentTopic, a=currentAge, x,y,p,ans,question,ex;
+ if(t===0){p=[10,20,25,50,75][rnd(0,4)];question=a===0?`There are 100 stars. ${p} are gold. How many percent are gold?`:`What does ${p}% mean out of 100?`;ans=p;ex=`${p}% means ${p} out of 100.`}
+ else if(t===1){
+  let sets=[[ [1,2,50],[1,4,25],[3,4,75],[1,5,20],[3,5,60] ],[[1,2,50],[3,5,60],[7,10,70],[9,20,45],[1,4,25]],[[3,8,37.5],[7,20,35],[9,25,36],[11,40,27.5],[13,50,26]]][a];
+  let s=sets[rnd(0,sets.length-1)];question=`Convert ${s[0]}/${s[1]} into a percentage.`;ans=s[2];ex=`${s[0]} ÷ ${s[1]} × 100 = ${s[2]}%.`;
+ }else if(t===2){p=[10,15,20,25,40,50,60][rnd(0,6)];x=[80,120,150,200,240,500,1500][rnd(0,6)];ans=x*p/100;question=`Find ${p}% of ${x}.`;ex=`${x} × ${p} ÷ 100 = ${ans}.`}
+ else if(t===3){y=[40,50,60,75,80,100,120,150,200][rnd(0,8)];p=[20,25,30,40,50,60,75][rnd(0,6)];x=y*p/100;question=`${x} is what percentage of ${y}?`;ans=p;ex=`(${x} ÷ ${y}) × 100 = ${p}%.`}
+ else if(t===4){p=[10,15,20,25,30][rnd(0,4)];x=[100,200,400,500,800,1000][rnd(0,5)];let inc=rnd(0,1)===1;ans=x*(100+(inc?p:-p))/100;question=`An amount of ${x} ${inc?'increases':'decreases'} by ${p}%. What is the new amount?`;ex=`${x} × ${inc?100+p:100-p} ÷ 100 = ${ans}.`}
+ else if(t===5){p=[5,10,15,20,25][rnd(0,4)];x=[100,200,400,500,800,1000][rnd(0,5)];let profit=rnd(0,1)===1;ans=x*(100+(profit?p:-p))/100;question=`An item costs ₹${x}. It is sold at a ${p}% ${profit?'profit':'loss'}. Find its selling price.`;ex=`SP = CP × (${profit?100+p:100-p}) ÷ 100 = ₹${ans}.`}
+ else {p=[5,10,15,20,25,30][rnd(0,5)];x=[200,400,500,800,1000,1200,1500][rnd(0,6)];ans=x*(100-p)/100;question=`The marked price is ₹${x}. A discount of ${p}% is given. Find the selling price.`;ex=`Discount = ${x} × ${p} ÷ 100. Selling price = ${x} − discount = ₹${ans}.`}
+ if(a===2 && t===5){/* tougher level still same concept; reverse CP */}
+ if(a===2 && t===2 && rnd(0,1)){let pct=[20,25,40,50][rnd(0,3)],part=[40,50,60,80,100,120][rnd(0,5)];let whole=part*100/pct;question=`${part} is ${pct}% of what number?`;ans=whole;ex=`Whole = part × 100 ÷ percent = ${part} × 100 ÷ ${pct} = ${whole}.`}
+ return {question,ans,ex};
+}
+function startRound(){questions=Array.from({length:5},makeQ);qIndex=0;correct=0;answered=false;showQ()}
+function showQ(){
+ const q=questions[qIndex],box=$("quiz");if(!q){box.innerHTML="";return}
+ box.innerHTML=`<div class="row"><span class="tag">QUESTION ${qIndex+1} / 5</span><span class="small">Correct: ${correct}</span></div><h3>${q.question}</h3><input id="answer" type="number" step="any" placeholder="Type your answer" onkeydown="if(event.key==='Enter')checkAnswer()"><div><button class="btn" onclick="checkAnswer()">Check answer</button><button class="btn secondary" onclick="hint()">Hint</button></div><div id="feedback" class="feedback"></div><div class="progress" style="margin-top:14px"><span style="width:${qIndex/5*100}%"></span></div>`;
+}
+function hint(){$("feedback").innerHTML="Hint: "+(currentTopic===0?"Remember: percent means out of 100.":currentTopic===1?"Divide the numerator by the denominator, then multiply by 100.":currentTopic===2?"Multiply the amount by the percentage, then divide by 100.":currentTopic===3?"Divide the part by the whole, then multiply by 100.":currentTopic===4?"Use original amount × (100 ± rate) ÷ 100.":currentTopic===5?"Profit or loss percentage is based on cost price.":"Discount percentage is based on marked price.");}
+function checkAnswer(){
+ if(answered)return;let v=Number($("answer").value);if($("answer").value.trim()===""){ $("feedback").textContent="Enter an answer first.";return}
+ let q=questions[qIndex],ok=Math.abs(v-q.ans)<0.011;answered=true;if(ok)correct++;
+ $("feedback").innerHTML=ok?'<span class="good">Correct! ⭐</span>':`<span class="bad">Not quite.</span> ${q.ex}`;
+ $("quiz").insertAdjacentHTML("beforeend",`<button class="btn" onclick="nextQ()">${qIndex===4?'See result':'Next question →'}</button>`);
+}
+function nextQ(){
+ qIndex++;answered=false;if(qIndex<5){showQ();return}
+ const box=$("quiz");if(correct===5){state.done[key()]=true;save();box.innerHTML=`<h3 class="good">🏆 Gate mastered! 100%</h3><p>You answered all five questions correctly. This topic is now complete for the ${ageNames[currentAge]} journey.</p><button class="btn" onclick="nextTopic()">Next topic →</button><button class="btn secondary" onclick="startRound()">Practise again</button>`}
+ else{box.innerHTML=`<h3>Score: ${correct}/5 · ${correct*20}%</h3><p>You need 100% to open this gate. No problem — every new round gives you fresh questions.</p><button class="btn" onclick="startRound()">Try a fresh round</button>`}
+ renderNav();updateCrown();
+}
+function nextTopic(){let n=topics.findIndex((_,i)=>i>currentTopic&&!completed(currentAge+"-"+i));if(n<0)n=0;openTopic(n)}
+renderNav();updateCrown();
+
+function enterGuest(){
+ document.getElementById("entry").classList.add("hidden");
+ document.getElementById("appShell").classList.remove("hidden");
+ document.getElementById("guestPill").textContent="Guest mode";
+ document.getElementById("welcome").classList.remove("hidden");
+ document.getElementById("lesson").classList.add("hidden");
+}
+function showLoginInfo(){document.getElementById("loginInfo").classList.remove("hidden");}
+</script></body></html>
