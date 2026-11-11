@@ -15,7 +15,7 @@ button,input{font:inherit}button{touch-action:manipulation}
 .entry-action{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:15px;border:0;border-radius:13px;background:var(--purple);color:#fff;font-weight:700;cursor:pointer;margin-top:11px;min-height:52px}
 .entry-action.alt{background:#f1eef9;color:#3d365e;border:1px solid #e2dced}
 .entry-note{font-size:12px;color:var(--muted);margin-top:16px}
-.login-fields{display:grid;gap:8px;text-align:left;margin-top:18px}.login-fields label{font-size:13px;font-weight:700}.login-fields input{width:100%;padding:13px;border:1px solid #d8d4e1;border-radius:10px}
+.login-fields{display:grid;gap:8px;text-align:left;margin-top:18px}.login-fields label{font-size:13px;font-weight:700}.login-fields input{width:100%;padding:13px;border:1px solid #d8d4e1;border-radius:10px}.forgot-link{justify-self:end;border:0;background:transparent;color:var(--purple);font-weight:650;text-decoration:underline;cursor:pointer;padding:5px 0}
 .hidden{display:none!important}
 main{max-width:1120px;margin:22px auto;padding:0 16px 42px;display:grid;grid-template-columns:270px minmax(0,1fr);gap:18px}
 .side{align-self:start;position:sticky;top:12px}.crown{text-align:center;padding:5px 0 15px}.crown .emoji{font-size:43px;filter:drop-shadow(0 3px 2px #d5b45b)}
@@ -61,29 +61,14 @@ input[type=number],input[type=text]{padding:13px;border:1px solid #cfcbdc;border
   <div class="entry-crown">👑</div>
   <h2>Welcome, Explorer!</h2>
   <p>Your mathematics adventure starts here.</p>
-  <button class="entry-action" onclick="enterGuest()">Continue as Guest</button>
-  <button class="entry-action alt" onclick="document.getElementById('loginPanel').classList.toggle('hidden')">Learner Login</button>
-  <div id="loginPanel" class="login-fields hidden">
+  <div id="loginPanel" class="login-fields">
    <label for="username">Username</label><input id="username" autocomplete="username" placeholder="Your username">
    <label for="password">Password</label><input id="password" type="password" autocomplete="current-password" placeholder="Your password">
-   <button class="entry-action" onclick="showLoginInfo()">Log in</button>
-   <div id="loginInfo" class="callout hidden" role="status">Secure learner accounts are the next setup step. The login screen is ready, but account authentication is not connected yet. Please use Guest mode for this version.</div>
+   <button class="entry-action" id="loginButton" onclick="loginLearner()">Log in</button>
+   <button type="button" class="forgot-link" onclick="showForgotPassword()">Forgot Password?</button>
+   <div id="loginInfo" class="callout hidden" role="status"></div>
   </div>
-  <div class="entry-note">No public sign-up. Learner accounts will be created by the administrator.</div>
- </div>
-</section>
-
-<section id="forgotPanel" class="entry hidden">
- <div class="entry-card">
-  <div class="entry-crown">✉️</div>
-  <h2>Reset your password</h2>
-  <p>Enter the email address registered with your learner account. We will send you a secure reset link.</p>
-  <div class="login-fields">
-   <label for="recoveryEmail">Email address</label>
-   <input id="recoveryEmail" type="email" autocomplete="email" placeholder="you@example.com">
-   <button class="entry-action" onclick="sendPasswordReset()">Send reset link</button>
-   <button class="entry-action alt" onclick="backToLogin()">Back to login</button>
-   <div id="recoveryMessage" class="callout hidden" role="status"></div>
+  <div class="entry-note">Learner accounts are created by the administrator. Public sign-up is disabled.</div>
   </div>
  </div>
 </section>
@@ -119,12 +104,12 @@ input[type=number],input[type=text]{padding:13px;border:1px solid #cfcbdc;border
 <div id="appShell" class="hidden">
 <main>
  <aside class="side">
-  <div class="topline"><b>Your learning space</b><span id="guestPill" class="guest-pill">Guest mode</span></div>
+  <div class="topline"><b>Your learning space</b><span id="guestPill" class="guest-pill">Learner mode</span></div>
   <button class="btn secondary" style="width:100%;margin:0" onclick="changeRoute()">Change learning route</button>
   <div class="crown"><div class="emoji">👑</div><b>Your Crown</b><div class="gems"><span id="gem0" class="gem">💎</span><span id="gem1" class="gem">💎</span><span id="gem2" class="gem">💎</span></div><div class="small">Earn one gemstone by mastering each age-level journey.</div></div>
   <div class="small">Chapter progress</div><div class="progress"><span id="overall"></span></div><div class="small" id="progressText">0 of 21 milestones mastered</div>
   <nav id="nav"></nav>
-  <p class="footer">Guest progress is saved in this browser on this device.</p>
+  <p class="footer">Your learning progress is saved in this browser on this device.</p>
  </aside>
  <section class="content">
   <div class="panel" id="welcome">
@@ -275,7 +260,7 @@ function nextTopic(){
 function chooseRoute(route){
  learningRoute=route;state.route=route;save();
  $("routePicker").classList.add("hidden");$("appShell").classList.remove("hidden");
- $("guestPill").textContent="Guest mode · "+(route==="fixed"?"Fixed":"Flexi")+" route";
+ $("guestPill").textContent="Learner mode · "+(route==="fixed"?"Fixed":"Flexi")+" route";
  currentAge=route==="fixed" ? firstIncompleteAge() : 0;
  $("welcome").classList.remove("hidden");$("lesson").classList.add("hidden");
  renderNav();updateCrown();
@@ -291,12 +276,52 @@ function firstIncompleteAge(){
 function changeRoute(){
  $("appShell").classList.add("hidden");$("routePicker").classList.remove("hidden");
 }
-function enterGuest(){
- $("entry").classList.add("hidden");
- $("routePicker").classList.remove("hidden");
- $("appShell").classList.add("hidden");
+function showLoginMessage(message,isError=true){
+  const box=$("loginInfo");
+  box.classList.remove("hidden");
+  box.textContent=message;
+  box.classList.toggle("bad",isError);
+  box.classList.toggle("good",!isError);
 }
-function showLoginInfo(){ $("loginInfo").classList.remove("hidden"); }
+async function loginLearner(){
+  if(!authConfigured()) return;
+  const username=$("username").value.trim();
+  const password=$("password").value;
+  const button=$("loginButton");
+  if(!username || !password){showLoginMessage("Please enter both your username and password.");return;}
+  button.disabled=true;button.textContent="Signing in…";
+  $("loginInfo").classList.add("hidden");
+  try{
+    const {data,error}=await supabaseClient.functions.invoke("username-login",{body:{username,password}});
+    if(error) throw error;
+    if(!data || !data.success || !data.session) throw new Error(data?.error || "The username or password is incorrect.");
+    const {error:sessionError}=await supabaseClient.auth.setSession({
+      access_token:data.session.access_token,
+      refresh_token:data.session.refresh_token
+    });
+    if(sessionError) throw sessionError;
+    const profile=data.profile || {};
+    const route=profile.learning_route==="flexi"?"flexi":"fixed";
+    $("entry").classList.add("hidden");
+    $("forgotPanel").classList.add("hidden");
+    $("routePicker").classList.add("hidden");
+    $("appShell").classList.remove("hidden");
+    learningRoute=route;state.route=route;save();
+    $("guestPill").textContent=(profile.username || username)+" · "+(route==="fixed"?"Fixed":"Flexi")+" route";
+    currentAge=route==="fixed"?firstIncompleteAge():0;
+    $("welcome").classList.remove("hidden");$("lesson").classList.add("hidden");
+    if(route==="flexi"){
+      $("flexiAgePicker").classList.remove("hidden");
+      $("flexiAgePicker").innerHTML=`<div class="callout"><b>Choose your age journey:</b><div class="levels">${ageNames.map((n,i)=>`<button onclick="setAge(${i});openTopic(0)">${['🟢','🔵','🟣'][i]} Age ${[8,10,12][i]}</button>`).join('')}</div></div>`;
+    }else{$("flexiAgePicker").classList.add("hidden");$("flexiAgePicker").innerHTML="";}
+    renderNav();updateCrown();
+  }catch(error){
+    console.error("Learner login failed",error);
+    showLoginMessage(error.message || "Login failed. Please check your details and try again.");
+  }finally{
+    button.disabled=false;button.textContent="Log in";
+  }
+}
 function authConfigured(){
  if(!supabaseClient){ alert("Supabase is not configured yet. Add your Project URL and anon/publishable key near the top of this file, then upload it to GitHub Pages."); return false; }
  return true;
