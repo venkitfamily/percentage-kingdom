@@ -73,6 +73,36 @@ input[type=number],input[type=text]{padding:13px;border:1px solid #cfcbdc;border
  </div>
 </section>
 
+<section id="forgotPanel" class="entry hidden">
+ <div class="entry-card">
+  <div class="entry-crown">✉️</div>
+  <h2>Reset your password</h2>
+  <p>Enter the email address registered with your learner account. We will send you a secure reset link.</p>
+  <div class="login-fields">
+   <label for="recoveryEmail">Email address</label>
+   <input id="recoveryEmail" type="email" autocomplete="email" placeholder="you@example.com">
+   <button class="entry-action" onclick="sendPasswordReset()">Send reset link</button>
+   <button class="entry-action alt" onclick="backToLogin()">Back to login</button>
+   <div id="recoveryMessage" class="callout hidden" role="status"></div>
+  </div>
+ </div>
+</section>
+
+<section id="newPasswordPanel" class="entry hidden">
+ <div class="entry-card">
+  <div class="entry-crown">🔐</div>
+  <h2>Choose a new password</h2>
+  <p>Enter your new password below. Use at least 8 characters.</p>
+  <div class="login-fields">
+   <label for="newPassword">New password</label>
+   <input id="newPassword" type="password" autocomplete="new-password" minlength="8" placeholder="New password">
+   <label for="confirmPassword">Confirm new password</label>
+   <input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Type it again">
+   <button class="entry-action" onclick="saveNewPassword()">Update password</button>
+   <div id="newPasswordMessage" class="callout hidden" role="status"></div>
+  </div>
+ </div>
+</section>
 
 <section id="routePicker" class="entry hidden">
  <div class="entry-card">
@@ -110,7 +140,18 @@ input[type=number],input[type=text]{padding:13px;border:1px solid #cfcbdc;border
  </section>
 </main>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// Add your Supabase Project URL and anon/publishable key from Project Settings → API.
+const SUPABASE_URL = "https://xzwmmkdzcydldvlkbvtr.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_76i2qeItCPiewP99Ei9egg_l7fa6jnT";
+let supabaseClient = null;
+try {
+ if (window.supabase && !SUPABASE_URL.includes("YOUR_PROJECT_REF") && !SUPABASE_ANON_KEY.startsWith("YOUR_")) {
+  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { flowType: "pkce", detectSessionInUrl: true, persistSession: true, autoRefreshToken: true } });
+ }
+} catch (e) { console.error("Supabase setup error", e); }
+
 const topics=[
  {name:"What is a percentage?",source:"A fraction whose denominator is 100 is called percent.",teach:[
  ["Imagine 100 little squares. If 25 are coloured, that is 25 out of 100 — or 25%.","25% means 25 of every 100. Think of a 100-square chocolate bar: colour 25 squares.","Percent means per hundred. Write a percentage as a fraction over 100: p% = p/100."],
@@ -256,6 +297,60 @@ function enterGuest(){
  $("appShell").classList.add("hidden");
 }
 function showLoginInfo(){ $("loginInfo").classList.remove("hidden"); }
+function authConfigured(){
+ if(!supabaseClient){ alert("Supabase is not configured yet. Add your Project URL and anon/publishable key near the top of this file, then upload it to GitHub Pages."); return false; }
+ return true;
+}
+function showForgotPassword(){
+ $("entry").classList.add("hidden");
+ $("forgotPanel").classList.remove("hidden");
+ $("recoveryEmail").value=$("username").value.includes("@")?$("username").value:"";
+ $("recoveryMessage").classList.add("hidden");
+}
+function backToLogin(){ $("forgotPanel").classList.add("hidden"); $("entry").classList.remove("hidden"); $("loginPanel").classList.remove("hidden"); }
+async function sendPasswordReset(){
+ if(!authConfigured()) return;
+ const email=$("recoveryEmail").value.trim(), msg=$("recoveryMessage");
+ msg.classList.remove("hidden");
+ if(!email){msg.textContent="Please enter your registered email address.";return;}
+ msg.textContent="Sending reset link…";
+ const redirectTo=window.location.origin+window.location.pathname;
+ const {error}=await supabaseClient.auth.resetPasswordForEmail(email,{redirectTo});
+ msg.textContent=error?"Could not send the email: "+error.message:"If an account exists for that email, a password-reset link has been sent. Check your inbox and spam folder.";
+}
+function showNewPasswordPanel(message){
+ $("entry").classList.add("hidden");$("forgotPanel").classList.add("hidden");$("routePicker").classList.add("hidden");$("appShell").classList.add("hidden");
+ $("newPasswordPanel").classList.remove("hidden");
+ if(message){const m=$("newPasswordMessage");m.classList.remove("hidden");m.textContent=message;}
+}
+async function saveNewPassword(){
+ if(!authConfigured()) return;
+ const p1=$("newPassword").value,p2=$("confirmPassword").value,m=$("newPasswordMessage");
+ m.classList.remove("hidden");
+ if(p1.length<8){m.textContent="Use at least 8 characters for your password.";return;}
+ if(p1!==p2){m.textContent="The two passwords do not match.";return;}
+ m.textContent="Updating password…";
+ const {error}=await supabaseClient.auth.updateUser({password:p1});
+ if(error){m.textContent="Password update failed: "+error.message;return;}
+ m.textContent="Your password has been updated successfully. You can now return to the login screen and sign in with your new password.";
+ $("newPassword").value="";$("confirmPassword").value="";
+}
+async function handleRecoveryLink(){
+ if(!supabaseClient) return;
+ const hash=new URLSearchParams(window.location.hash.replace(/^#/,""));
+ const query=new URLSearchParams(window.location.search);
+ const isRecovery=hash.get("type")==="recovery" || query.get("type")==="recovery";
+ if(!isRecovery) return;
+ const {data,error}=await supabaseClient.auth.getSession();
+ if(error || !data.session){showNewPasswordPanel("This reset link is invalid or has expired. Please request a new password-reset email.");return;}
+ showNewPasswordPanel();
+}
+if(supabaseClient){
+ supabaseClient.auth.onAuthStateChange((event)=>{
+  if(event==="PASSWORD_RECOVERY") showNewPasswordPanel();
+ });
+}
 renderNav();updateCrown();
+handleRecoveryLink();
 
 </script></body></html>
