@@ -1,54 +1,100 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#29264f">
 <title>The Percentage Kingdom | Chapter 8</title>
 <style>
-:root{--ink:#20243a;--muted:#667085;--paper:#fffdf7;--purple:#5b4b9a;--gold:#e5ad37;--mint:#dff4e8;--line:#e8e5dc;--pink:#fbe6eb}
+:root{--ink:#20243a;--muted:#687083;--paper:#fffdf8;--purple:#5b4b9a;--gold:#e5ad37;--mint:#dff4e8;--line:#e8e5dc;--lav:#f3f0fb}
 *{box-sizing:border-box}body{margin:0;background:#f5f3ed;color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
-header{background:linear-gradient(120deg,#25284d,#55458b);color:white;padding:24px max(20px,calc((100% - 1120px)/2));}
-header h1{font-size:clamp(25px,4vw,38px);margin:0 0 4px}header p{margin:0;color:#e7e4f5}
-main{max-width:1120px;margin:22px auto;padding:0 16px 50px;display:grid;grid-template-columns:270px 1fr;gap:18px}
-aside,.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 4px 18px #24213a0a}
-aside{align-self:start;position:sticky;top:12px}.crown{text-align:center;padding:8px 0 16px}.crown .emoji{font-size:48px;filter:drop-shadow(0 3px 2px #d5b45b)}
-.gems{display:flex;justify-content:center;gap:10px;margin:8px}.gem{font-size:25px;opacity:.25;filter:grayscale(1)}.gem.earned{opacity:1;filter:none;animation:shine 1.7s infinite alternate}
-@keyframes shine{from{filter:drop-shadow(0 0 1px #fff)}to{filter:drop-shadow(0 0 9px #ffc94a) brightness(1.25)}}
+button,input{font:inherit}button{touch-action:manipulation}
+.hero{background:linear-gradient(125deg,#25284d,#594a91);color:#fff;padding:25px max(18px,calc((100% - 1100px)/2)) 28px}
+.hero h1{font-size:clamp(25px,4vw,38px);line-height:1.15;margin:0 0 7px}.hero p{margin:0;color:#e7e4f5}
+.entry{max-width:480px;margin:32px auto;padding:0 16px 40px}.entry-card,.panel,.side{background:white;border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 5px 20px #24213a0a}
+.entry-card{text-align:center;padding:26px 22px}.entry-crown{font-size:58px;line-height:1.2}.entry-card h2{margin:8px 0 2px}.entry-card>p{color:var(--muted);margin:0 0 20px}
+.entry-action{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:15px;border:0;border-radius:13px;background:var(--purple);color:#fff;font-weight:700;cursor:pointer;margin-top:11px;min-height:52px}
+.entry-action.alt{background:#f1eef9;color:#3d365e;border:1px solid #e2dced}
+.entry-note{font-size:12px;color:var(--muted);margin-top:16px}
+.login-fields{display:grid;gap:8px;text-align:left;margin-top:18px}.login-fields label{font-size:13px;font-weight:700}.login-fields input{width:100%;padding:13px;border:1px solid #d8d4e1;border-radius:10px}
+.hidden{display:none!important}
+main{max-width:1120px;margin:22px auto;padding:0 16px 42px;display:grid;grid-template-columns:270px minmax(0,1fr);gap:18px}
+.side{align-self:start;position:sticky;top:12px}.crown{text-align:center;padding:5px 0 15px}.crown .emoji{font-size:43px;filter:drop-shadow(0 3px 2px #d5b45b)}
+.gems{display:flex;justify-content:center;gap:10px;margin:7px}.gem{font-size:24px;opacity:.24;filter:grayscale(1)}.gem.earned{opacity:1;filter:none;animation:shine 1.7s infinite alternate}
+@keyframes shine{from{filter:drop-shadow(0 0 1px #fff)}to{filter:drop-shadow(0 0 9px #ffc94a) brightness(1.2)}}
 .progress{height:9px;background:#eeeaf5;border-radius:20px;overflow:hidden}.progress span{display:block;height:100%;background:linear-gradient(90deg,#72c79c,#e6b847);width:0}
-.small{font-size:13px;color:var(--muted)}nav{display:grid;gap:7px;margin-top:14px}nav button,.btn{border:0;border-radius:11px;padding:11px 12px;text-align:left;background:#f5f3fa;color:var(--ink);cursor:pointer;font:inherit}
-nav button.active{background:#eae5fa;outline:2px solid #bdb0e8}button:disabled{opacity:.45;cursor:not-allowed}
-.content{display:grid;gap:16px}.panel h2{margin:0 0 8px;font-size:24px}.panel h3{margin:18px 0 6px}.tag{display:inline-block;background:#f1edfb;color:#51418d;padding:4px 9px;border-radius:20px;font-size:12px;font-weight:700}
-.levels{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.levels button{background:#f2f0eb;border:1px solid var(--line);padding:9px 13px;border-radius:30px;cursor:pointer}.levels button.active{background:#51418d;color:white}
-.callout{background:#f7f5ff;border-left:4px solid #8a78c7;padding:12px 14px;border-radius:9px;margin:12px 0}
+.small{font-size:13px;color:var(--muted)}nav{display:grid;gap:7px;margin-top:14px}nav button,.btn{border:0;border-radius:11px;padding:11px 12px;text-align:left;background:#f5f3fa;color:var(--ink);cursor:pointer}
+nav button.active{background:#eae5fa;outline:2px solid #bdb0e8}
+.content{display:grid;gap:16px;min-width:0}.panel h2{margin:0 0 8px;font-size:24px}.panel h3{margin:18px 0 6px}.tag{display:inline-block;background:#f1edfb;color:#51418d;padding:4px 9px;border-radius:20px;font-size:12px;font-weight:700}
+.levels{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.levels button{background:#f2f0eb;border:1px solid var(--line);padding:10px 14px;border-radius:30px;cursor:pointer;min-height:43px}.levels button.active{background:#51418d;color:white}
+.callout{background:#f7f5ff;border-left:4px solid #8a78c7;padding:13px 14px;border-radius:9px;margin:12px 0}
 .diagram{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:15px 0;padding:15px;background:#fbfaf6;border-radius:12px}
-.unit{width:38px;height:38px;border-radius:8px;background:#e8e5f0;border:1px solid #d5d0e2}.unit.on{background:#75c99d;border-color:#55aa7d}
+.unit{width:36px;height:36px;border-radius:8px;background:#e8e5f0;border:1px solid #d5d0e2}.unit.on{background:#75c99d;border-color:#55aa7d}
 .steps{padding-left:22px}.steps li{margin:7px 0}.practice{background:#fffaf0;border:1px solid #f1dfb7;border-radius:14px;padding:16px}
-input[type=number],input[type=text]{padding:11px;border:1px solid #cfcbdc;border-radius:9px;font:inherit;width:min(100%,220px)}
-.btn{background:var(--purple);color:white;text-align:center;padding:11px 17px;margin:6px 5px 0 0}.btn.secondary{background:#eeeaf5;color:#39334f}
+input[type=number],input[type=text]{padding:13px;border:1px solid #cfcbdc;border-radius:10px;font:inherit;width:min(100%,260px);min-height:48px}
+.btn{background:var(--purple);color:white;text-align:center;padding:12px 17px;margin:6px 5px 0 0;min-height:46px}.btn.secondary{background:#eeeaf5;color:#39334f}
 .feedback{margin-top:10px;font-weight:650}.good{color:#18824f}.bad{color:#b44747}.muted{color:var(--muted)}
-.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.stat{background:#f7f6f2;border-radius:12px;padding:10px 14px;min-width:110px}.stat b{display:block;font-size:20px}
-.lock{color:#a19bad;font-size:12px}.hidden{display:none}.footer{font-size:12px;color:#777;margin-top:14px}
-@media(max-width:760px){main{grid-template-columns:1fr}aside{position:static}.crown{padding-bottom:4px}nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.stat{background:#f7f6f2;border-radius:12px;padding:10px 14px;min-width:110px;flex:1}.stat b{display:block;font-size:19px}
+.footer{font-size:12px;color:#777;margin-top:14px}.topline{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.guest-pill{font-size:12px;background:#e9f4ec;color:#276b45;border-radius:30px;padding:5px 10px;font-weight:700}
+@media(max-width:760px){
+ body{padding-bottom:env(safe-area-inset-bottom)}.hero{padding:19px 17px 21px}.hero h1{font-size:26px}
+ main{display:flex;flex-direction:column;margin:12px auto;padding:0 12px 30px;gap:12px}
+ .side{position:static;padding:12px 13px;border-radius:16px}
+ .crown{display:grid;grid-template-columns:auto 1fr;align-items:center;text-align:left;column-gap:10px;padding:0 0 10px}
+ .crown .emoji{grid-row:span 2;font-size:35px}.crown b{align-self:end}.crown .gems{justify-content:flex-start;margin:0}
+ .crown .small{grid-column:1/-1;margin-top:5px}
+ nav{display:flex;overflow-x:auto;gap:7px;margin:10px -3px 0;padding:2px 3px 5px;scrollbar-width:thin}
+ nav button{white-space:nowrap;flex:0 0 auto;font-size:13px;padding:10px 12px}
+ .content{gap:12px}.panel{padding:16px;border-radius:16px}.panel h2{font-size:22px}
+ .levels{display:grid;grid-template-columns:1fr;gap:7px}.levels button{text-align:left;width:100%}
+ .diagram{gap:5px;padding:12px}.unit{width:29px;height:29px;border-radius:6px}
+ .practice{padding:13px}.practice input[type=number]{width:100%;max-width:none}
+ .btn{min-height:49px}.stat{min-width:calc(50% - 8px)}
+ .entry{margin:18px auto}.entry-card{padding:23px 18px}
+}
+@media(max-width:360px){.hero h1{font-size:23px}.unit{width:25px;height:25px}.stat{min-width:100%}}
 </style></head>
 <body>
-<header><h1>🏰 The Percentage Kingdom</h1><p>Chapter 8 · Percentage and its Applications · Your quest to the Golden Crown</p></header>
-<main>
-<aside>
- <div class="crown"><div class="emoji">👑</div><b>Your Crown</b><div class="gems"><span id="gem0" class="gem">💎</span><span id="gem1" class="gem">💎</span><span id="gem2" class="gem">💎</span></div><div class="small">Earn one gemstone by mastering each age-level journey.</div></div>
- <div class="small">Chapter progress</div><div class="progress"><span id="overall"></span></div><div class="small" id="progressText">0 of 21 milestones mastered</div>
- <nav id="nav"></nav>
- <p class="footer">Your progress is saved in this browser on this device.</p>
-</aside>
-<section class="content">
- <div class="panel" id="welcome">
-  <span class="tag">YOUR ADVENTURE STARTS HERE</span><h2>Welcome, Percentage Explorer!</h2>
-  <p>A percentage is a way of saying <b>“out of 100”</b>. In this kingdom, you will learn the same chapter in three journeys:</p>
-  <div class="row"><div class="stat"><b>🟢 8 years</b><span class="small">Little Explorer</span></div><div class="stat"><b>🔵 10 years</b><span class="small">Number Adventurer</span></div><div class="stat"><b>🟣 12 years</b><span class="small">Master Champion</span></div></div>
-  <div class="callout">Complete all seven topic gates in a journey with <b>100% mastery</b>. Then your gemstone is added to the crown. You can practise again with fresh questions.</div>
-  <h3>Seven topic gates</h3><p>1. What is percent? · 2. Fractions and percent · 3. Percent of an amount · 4. Percentage word problems · 5. Increase and decrease · 6. Profit and loss · 7. Discount</p>
-  <button class="btn" onclick="openTopic(0)">Begin the quest →</button>
+<header class="hero"><h1>🏰 The Percentage Kingdom</h1><p>Chapter 8 · Percentage and its Applications</p></header>
+
+<section id="entry" class="entry">
+ <div class="entry-card">
+  <div class="entry-crown">👑</div>
+  <h2>Welcome, Explorer!</h2>
+  <p>Your mathematics adventure starts here.</p>
+  <button class="entry-action" onclick="enterGuest()">Continue as Guest</button>
+  <button class="entry-action alt" onclick="document.getElementById('loginPanel').classList.toggle('hidden')">Learner Login</button>
+  <div id="loginPanel" class="login-fields hidden">
+   <label for="username">Username</label><input id="username" autocomplete="username" placeholder="Your username">
+   <label for="password">Password</label><input id="password" type="password" autocomplete="current-password" placeholder="Your password">
+   <button class="entry-action" onclick="showLoginInfo()">Log in</button>
+   <div id="loginInfo" class="callout hidden" role="status">Secure learner accounts are the next setup step. The login screen is ready, but account authentication is not connected yet. Please use Guest mode for this version.</div>
+  </div>
+  <div class="entry-note">No public sign-up. Learner accounts will be created by the administrator.</div>
  </div>
- <div class="panel hidden" id="lesson"></div>
-</section></main>
+</section>
+
+<div id="appShell" class="hidden">
+<main>
+ <aside class="side">
+  <div class="topline"><b>Your learning space</b><span id="guestPill" class="guest-pill">Guest mode</span></div>
+  <div class="crown"><div class="emoji">👑</div><b>Your Crown</b><div class="gems"><span id="gem0" class="gem">💎</span><span id="gem1" class="gem">💎</span><span id="gem2" class="gem">💎</span></div><div class="small">Earn one gemstone by mastering each age-level journey.</div></div>
+  <div class="small">Chapter progress</div><div class="progress"><span id="overall"></span></div><div class="small" id="progressText">0 of 21 milestones mastered</div>
+  <nav id="nav"></nav>
+  <p class="footer">Guest progress is saved in this browser on this device.</p>
+ </aside>
+ <section class="content">
+  <div class="panel" id="welcome">
+   <span class="tag">YOUR ADVENTURE STARTS HERE</span><h2>Welcome to your learning kingdom!</h2>
+   <p>A percentage is a way of saying <b>“out of 100”</b>. Choose a learning journey and explore the seven topic gates.</p>
+   <div class="row"><div class="stat"><b>🟢 Age 8</b><span class="small">Little Explorer</span></div><div class="stat"><b>🔵 Age 10</b><span class="small">Number Adventurer</span></div><div class="stat"><b>🟣 Age 12</b><span class="small">Master Champion</span></div></div>
+   <div class="callout">Complete all seven topic gates in a journey with <b>100% mastery</b>. Then your gemstone is added to the crown.</div>
+   <h3>Your seven topic gates</h3><p>Understanding percentage · Fractions and percentage · Percentage of an amount · Word problems · Increase and decrease · Profit and loss · Discount</p>
+   <button class="btn" onclick="openTopic(0)">Begin the quest →</button>
+  </div>
+  <div class="panel hidden" id="lesson"></div>
+ </section>
+</main>
+</div>
 <script>
 const topics=[
  {name:"What is a percentage?",source:"A fraction whose denominator is 100 is called percent.",teach:[
@@ -152,4 +198,13 @@ function nextQ(){
 }
 function nextTopic(){let n=topics.findIndex((_,i)=>i>currentTopic&&!completed(currentAge+"-"+i));if(n<0)n=0;openTopic(n)}
 renderNav();updateCrown();
+
+function enterGuest(){
+ document.getElementById("entry").classList.add("hidden");
+ document.getElementById("appShell").classList.remove("hidden");
+ document.getElementById("guestPill").textContent="Guest mode";
+ document.getElementById("welcome").classList.remove("hidden");
+ document.getElementById("lesson").classList.add("hidden");
+}
+function showLoginInfo(){document.getElementById("loginInfo").classList.remove("hidden");}
 </script></body></html>
