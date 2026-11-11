@@ -147,7 +147,7 @@ const SUPABASE_ANON_KEY = "sb_publishable_76i2qeItCPiewP99Ei9egg_l7fa6jnT";
 let supabaseClient = null;
 try {
  if (window.supabase && !SUPABASE_URL.includes("YOUR_PROJECT_REF") && !SUPABASE_ANON_KEY.startsWith("YOUR_")) {
-  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { flowType: "pkce", detectSessionInUrl: true, persistSession: true, autoRefreshToken: true } });
+  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { flowType: "pkce", detectSessionInUrl: false, persistSession: true, autoRefreshToken: true } });
  }
 } catch (e) { console.error("Supabase setup error", e); }
 
@@ -369,25 +369,68 @@ async function saveNewPassword(){
  if(p1.length<8){m.textContent="Use at least 8 characters for your password.";return;}
  if(p1!==p2){m.textContent="The two passwords do not match.";return;}
  m.textContent="Updating password…";
+ const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
+ if(sessionError || !sessionData.session){
+  m.textContent="Your password-reset session is missing or has expired. Please request a new reset link.";
+  return;
+ }
  const {error}=await supabaseClient.auth.updateUser({password:p1});
  if(error){m.textContent="Password update failed: "+error.message;return;}
- m.textContent="Your password has been updated successfully. You can now return to the login screen and sign in with your new password.";
+ m.textContent="Your password has been updated successfully. Please return to the login screen and sign in with your new password.";
  $("newPassword").value="";$("confirmPassword").value="";
-}
-async function handleRecoveryLink(){
- if(!supabaseClient) return;
- const hash=new URLSearchParams(window.location.hash.replace(/^#/,""));
- const query=new URLSearchParams(window.location.search);
- const isRecovery=hash.get("type")==="recovery" || query.get("type")==="recovery";
- if(!isRecovery) return;
- const {data,error}=await supabaseClient.auth.getSession();
- if(error || !data.session){showNewPasswordPanel("This reset link is invalid or has expired. Please request a new password-reset email.");return;}
- showNewPasswordPanel();
+ await supabaseClient.auth.signOut();
 }
 if(supabaseClient){
  supabaseClient.auth.onAuthStateChange((event)=>{
   if(event==="PASSWORD_RECOVERY") showNewPasswordPanel();
  });
+}
+
+async function handleRecoveryLink(){
+ if(!supabaseClient) return;
+
+ const query=new URLSearchParams(window.location.search);
+ const hash=new URLSearchParams(window.location.hash.replace(/^#/,""));
+ const code=query.get("code");
+ const hashAccess=hash.get("access_token");
+ const hashRefresh=hash.get("refresh_token");
+ const isRecovery=hash.get("type")==="recovery" || query.get("type")==="recovery";
+
+ // PKCE password-reset emails normally return a one-time ?code=... parameter.
+ if(code){
+  const {data,error}=await supabaseClient.auth.exchangeCodeForSession(code);
+  if(error || !data.session){
+   showNewPasswordPanel("This reset link is invalid, expired, or has already been used. Please request a new password-reset email.");
+   return;
+  }
+  window.history.replaceState({},document.title,window.location.pathname);
+  showNewPasswordPanel();
+  return;
+ }
+
+ // Also support older implicit-flow recovery links.
+ if(isRecovery && hashAccess && hashRefresh){
+  const {data,error}=await supabaseClient.auth.setSession({
+   access_token:hashAccess,
+   refresh_token:hashRefresh
+  });
+  if(error || !data.session){
+   showNewPasswordPanel("This reset link is invalid, expired, or has already been used. Please request a new password-reset email.");
+   return;
+  }
+  window.history.replaceState({},document.title,window.location.pathname);
+  showNewPasswordPanel();
+  return;
+ }
+
+ if(isRecovery){
+  const {data,error}=await supabaseClient.auth.getSession();
+  if(!error && data.session){
+   showNewPasswordPanel();
+  }else{
+   showNewPasswordPanel("This reset link is invalid, expired, or has already been used. Please request a new password-reset email.");
+  }
+ }
 }
 renderNav();updateCrown();
 handleRecoveryLink();
