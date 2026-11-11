@@ -69,6 +69,20 @@ input[type=number],input[type=text]{padding:13px;border:1px solid #cfcbdc;border
    <div id="loginInfo" class="callout hidden" role="status"></div>
   </div>
   <div class="entry-note">Learner accounts are created by the administrator. Public sign-up is disabled.</div>
+ </div>
+</section>
+
+<section id="forgotPanel" class="entry hidden">
+ <div class="entry-card">
+  <div class="entry-crown">✉️</div>
+  <h2>Reset your password</h2>
+  <p>Enter the email address registered with your learner account. We will send you a secure reset link.</p>
+  <div class="login-fields">
+   <label for="recoveryEmail">Email address</label>
+   <input id="recoveryEmail" type="email" autocomplete="email" placeholder="you@example.com">
+   <button class="entry-action" type="button" onclick="sendPasswordReset()">Send reset link</button>
+   <button class="entry-action alt" type="button" onclick="backToLogin()">Back to login</button>
+   <div id="recoveryMessage" class="callout hidden" role="status"></div>
   </div>
  </div>
 </section>
