@@ -19,3 +19,10 @@ UPLOAD:
 This is a structural refactor only. Existing lesson content and behaviour are retained.
 Progress is still stored in browser localStorage; Supabase cross-device progress sync is a later development stage.
 The publishable key is safe for browser use with appropriate Supabase RLS and Edge Function security. Never use a service-role key in the website.
+
+
+Next release changes:
+- Question generator records recent questions separately for each age/topic and avoids repeats across rounds (including after refresh).
+- Each topic shows two worked examples with step-by-step explanations; learners can request two more examples repeatedly.
+- Compact sticky topic context bar on mobile.
+- Existing Supabase login/auth files are retained unchanged.

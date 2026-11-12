@@ -45,3 +45,18 @@ input[type=number],input[type=text]{padding:13px;border:1px solid #cfcbdc;border
  .entry{margin:18px auto}.entry-card{padding:23px 18px}
 }
 @media(max-width:360px){.hero h1{font-size:23px}.unit{width:25px;height:25px}.stat{min-width:100%}}
+
+/* Worked examples */
+.examples{margin:18px 0 20px}
+.worked-example{background:#fbfaf6;border:1px solid #e9e3d6;border-radius:13px;padding:14px;margin:10px 0}
+.worked-example .steps{margin:8px 0}
+.example-answer{background:#eef7f0;border-radius:8px;padding:9px 11px;color:#225c3b}
+/* Compact topic context bar */
+.sticky-context{display:none}
+@media(max-width:760px){
+ .sticky-context{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:7px 10px;flex-wrap:wrap;padding:8px 12px;background:#fffdf8;border-bottom:1px solid #e6e1d7;box-shadow:0 2px 8px #24213a0b;font-size:11px;line-height:1.25}
+ .sticky-chapter{font-weight:800;color:#51418d}
+ .sticky-age,.sticky-progress{color:#687083}
+ .sticky-topic{flex:1 1 100%;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ main{margin-top:8px}
+}
