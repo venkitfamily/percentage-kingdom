@@ -26,3 +26,11 @@ Next release changes:
 - Each topic shows two worked examples with step-by-step explanations; learners can request two more examples repeatedly.
 - Compact sticky topic context bar on mobile.
 - Existing Supabase login/auth files are retained unchanged.
+
+
+Release 3 - Administrator learner creation:
+- Admin Dashboard button is displayed only when the authenticated profile role is "admin".
+- Admin can create learner accounts using the existing Supabase Edge Function "create-learner".
+- Form fields: username, temporary password, learning route (fixed/flexi).
+- Learner accounts are not created through public sign-up.
+- IMPORTANT: The Supabase Edge Function must enforce administrator role authorization server-side. Hiding the dashboard in the browser is not a security boundary. Verify the deployed create-learner function checks both the authenticated user and profiles.role = 'admin' before creating accounts.

@@ -60,3 +60,9 @@ input[type=number],input[type=text]{padding:13px;border:1px solid #cfcbdc;border
  .sticky-topic{flex:1 1 100%;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
  main{margin-top:8px}
 }
+
+/* Administrator dashboard */
+.admin-card{display:grid;gap:9px;background:#fbfaf6;border:1px solid #e8e5dc;border-radius:14px;padding:16px;margin:14px 0}
+.admin-card label{font-size:13px;font-weight:750}
+.admin-card input,.admin-card select{width:100%;max-width:100%;padding:13px;border:1px solid #d8d4e1;border-radius:10px;background:#fff;font:inherit;min-height:48px}
+.admin-card .btn{justify-self:start}

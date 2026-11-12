@@ -72,6 +72,7 @@
  <aside class="side">
   <div class="topline"><b>Your learning space</b><span id="guestPill" class="guest-pill">Learner mode</span></div>
   <button class="btn secondary" style="width:100%;margin:0" onclick="changeRoute()">Change learning route</button>
+  <button id="adminDashboardButton" class="btn" style="width:100%;margin-top:8px;display:none" onclick="openAdminDashboard()">⚙️ Admin Dashboard</button>
   <div class="crown"><div class="emoji">👑</div><b>Your Crown</b><div class="gems"><span id="gem0" class="gem">💎</span><span id="gem1" class="gem">💎</span><span id="gem2" class="gem">💎</span></div><div class="small">Earn one gemstone by mastering each age-level journey.</div></div>
   <div class="small">Chapter progress</div><div class="progress"><span id="overall"></span></div><div class="small" id="progressText">0 of 21 milestones mastered</div>
   <nav id="nav"></nav>
@@ -88,11 +89,12 @@
    <button class="btn" onclick="openTopic(0)">Begin the quest →</button>
   </div>
   <div class="panel hidden" id="lesson"></div>
+  <div class="panel hidden" id="adminDashboard"></div>
  </section>
 </main>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="js/data/chapter-8.js"></script>
 <script src="js/config.js"></script>
 <script src="js/question-engine.js"></script>

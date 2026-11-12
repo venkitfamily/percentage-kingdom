@@ -23,6 +23,10 @@ async function loginLearner(){
     });
     if(sessionError) throw sessionError;
     const profile=data.profile || {};
+    window.currentLearnerProfile=profile;
+    window.isKingdomAdmin=profile.role==="admin";
+    const adminButton=$("adminDashboardButton");
+    if(adminButton)adminButton.style.display=window.isKingdomAdmin?"block":"none";
     const route=profile.learning_route==="flexi"?"flexi":"fixed";
     $("entry").classList.add("hidden");
     $("forgotPanel").classList.add("hidden");
@@ -138,5 +142,83 @@ async function handleRecoveryLink(){
   }else{
    showNewPasswordPanel("This reset link is invalid, expired, or has already been used. Please request a new password-reset email.");
   }
+ }
+}
+
+
+// Administrator-only learner creation dashboard.
+function openAdminDashboard(){
+ if(!window.isKingdomAdmin){alert("Administrator access is required.");return;}
+ $("welcome").classList.add("hidden");
+ $("lesson").classList.add("hidden");
+ $("adminDashboard").classList.remove("hidden");
+ $("adminDashboard").innerHTML=`
+  <span class="tag">ADMINISTRATION</span>
+  <h2>Administrator Dashboard</h2>
+  <p class="muted">Create learner accounts. Public registration remains disabled.</p>
+  <div class="admin-card">
+   <h3>＋ Create a learner</h3>
+   <label for="newLearnerUsername">Username</label>
+   <input id="newLearnerUsername" type="text" minlength="3" maxlength="30" autocomplete="off" placeholder="e.g. learner01">
+   <p class="small">Use 3–30 lowercase letters, numbers or underscores.</p>
+   <label for="newLearnerPassword">Temporary password</label>
+   <input id="newLearnerPassword" type="password" minlength="10" autocomplete="new-password" placeholder="At least 10 characters">
+   <label for="newLearnerRoute">Learning route</label>
+   <select id="newLearnerRoute">
+    <option value="fixed">Fixed Route (Age 8 → 10 → 12)</option>
+    <option value="flexi">Flexi Route (learner chooses)</option>
+   </select>
+   <button id="createLearnerButton" class="btn" type="button" onclick="createLearnerAccount()">Create learner account</button>
+   <div id="createLearnerMessage" class="callout hidden" role="status"></div>
+  </div>
+  <div class="callout">
+   <b>After creating the account</b>
+   <ol class="steps">
+    <li>Share the username and temporary password securely with the learner.</li>
+    <li>Ask the learner to log in using the website.</li>
+    <li>They can use Forgot Password if they need to change their password.</li>
+   </ol>
+  </div>
+  <p class="small">Account creation is handled by the secured Supabase Edge Function. This page does not expose a public sign-up option.</p>
+  <button class="btn secondary" type="button" onclick="closeAdminDashboard()">← Back to learning</button>`;
+}
+function closeAdminDashboard(){
+ $("adminDashboard").classList.add("hidden");
+ $("welcome").classList.remove("hidden");
+}
+async function createLearnerAccount(){
+ if(!window.isKingdomAdmin){alert("Administrator access is required.");return;}
+ if(!authConfigured())return;
+ const username=$("newLearnerUsername").value.trim().toLowerCase();
+ const password=$("newLearnerPassword").value;
+ const learning_route=$("newLearnerRoute").value;
+ const msg=$("createLearnerMessage"),btn=$("createLearnerButton");
+ msg.classList.remove("hidden");msg.classList.remove("good","bad");
+ if(!/^[a-z0-9_]{3,30}$/.test(username)){
+  msg.textContent="Username must be 3–30 characters and contain only lowercase letters, numbers or underscores.";
+  msg.classList.add("bad");return;
+ }
+ if(password.length<10){
+  msg.textContent="Please use a temporary password with at least 10 characters.";
+  msg.classList.add("bad");return;
+ }
+ btn.disabled=true;btn.textContent="Creating account…";
+ msg.textContent="Creating the learner account…";
+ try{
+  const {data,error}=await supabaseClient.functions.invoke("create-learner",{
+   body:{username,password,learning_route}
+  });
+  if(error)throw error;
+  if(!data || data.success===false)throw new Error(data?.error||"The account could not be created.");
+  msg.textContent=`Learner account “${username}” has been created. Share the username and temporary password securely with the learner.`;
+  msg.classList.add("good");
+  $("newLearnerUsername").value="";
+  $("newLearnerPassword").value="";
+ }catch(error){
+  console.error("Create learner failed",error);
+  msg.textContent=error.message||"Could not create the learner. Please check the username and try again.";
+  msg.classList.add("bad");
+ }finally{
+  btn.disabled=false;btn.textContent="Create learner account";
  }
 }
