@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#29264f">
+<title>The Percentage Kingdom | Chapter 8</title>
+<link rel="stylesheet" href="css/style.css"></head>
+<body>
+<header class="hero"><h1>🏰 The Percentage Kingdom</h1><p>Chapter 8 · Percentage and its Applications</p></header>
+
+<section id="entry" class="entry">
+ <div class="entry-card">
+  <div class="entry-crown">👑</div>
+  <h2>Welcome, Explorer!</h2>
+  <p>Your mathematics adventure starts here.</p>
+  <div id="loginPanel" class="login-fields">
+   <label for="username">Username</label><input id="username" autocomplete="username" placeholder="Your username">
+   <label for="password">Password</label><input id="password" type="password" autocomplete="current-password" placeholder="Your password">
+   <button class="entry-action" id="loginButton" onclick="loginLearner()">Log in</button>
+   <button type="button" class="forgot-link" onclick="showForgotPassword()">Forgot Password?</button>
+   <div id="loginInfo" class="callout hidden" role="status"></div>
+  </div>
+  <div class="entry-note">Learner accounts are created by the administrator. Public sign-up is disabled.</div>
+ </div>
+</section>
+
+<section id="forgotPanel" class="entry hidden">
+ <div class="entry-card">
+  <div class="entry-crown">✉️</div>
+  <h2>Reset your password</h2>
+  <p>Enter the email address registered with your learner account. We will send you a secure reset link.</p>
+  <div class="login-fields">
+   <label for="recoveryEmail">Email address</label>
+   <input id="recoveryEmail" type="email" autocomplete="email" placeholder="you@example.com">
+   <button class="entry-action" type="button" onclick="sendPasswordReset()">Send reset link</button>
+   <button class="entry-action alt" type="button" onclick="backToLogin()">Back to login</button>
+   <div id="recoveryMessage" class="callout hidden" role="status"></div>
+  </div>
+ </div>
+</section>
+
+<section id="newPasswordPanel" class="entry hidden">
+ <div class="entry-card">
+  <div class="entry-crown">🔐</div>
+  <h2>Choose a new password</h2>
+  <p>Enter your new password below. Use at least 8 characters.</p>
+  <div class="login-fields">
+   <label for="newPassword">New password</label>
+   <input id="newPassword" type="password" autocomplete="new-password" minlength="8" placeholder="New password">
+   <label for="confirmPassword">Confirm new password</label>
+   <input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Type it again">
+   <button class="entry-action" onclick="saveNewPassword()">Update password</button>
+   <div id="newPasswordMessage" class="callout hidden" role="status"></div>
+  </div>
+ </div>
+</section>
+
+<section id="routePicker" class="entry hidden">
+ <div class="entry-card">
+  <div class="entry-crown">🧭</div>
+  <h2>Choose your learning route</h2>
+  <p>How would you like to progress through the three learning journeys?</p>
+  <button class="entry-action" onclick="chooseRoute('fixed')">🔒 Fixed Route</button>
+  <div class="small">Complete Age 8, then Age 10, then Age 12. The next journey unlocks only after all seven topics are mastered.</div>
+  <button class="entry-action alt" onclick="chooseRoute('flexi')">🌈 Flexi Route</button>
+  <div class="small">Choose between Age 8, Age 10 and Age 12 whenever you like.</div>
+  <div class="entry-note">You can change your route later. Your completed topics and gemstones stay saved on this device.</div>
+ </div>
+</section>
+<div id="appShell" class="hidden">
+<main>
+ <aside class="side">
+  <div class="topline"><b>Your learning space</b><span id="guestPill" class="guest-pill">Learner mode</span></div>
+  <button class="btn secondary" style="width:100%;margin:0" onclick="changeRoute()">Change learning route</button>
+  <button id="adminDashboardButton" class="btn" style="width:100%;margin-top:8px;display:none" onclick="openAdminDashboard()">⚙️ Admin Dashboard</button>
+  <div class="crown"><div class="emoji">👑</div><b>Your Crown</b><div class="gems"><span id="gem0" class="gem">💎</span><span id="gem1" class="gem">💎</span><span id="gem2" class="gem">💎</span></div><div class="small">Earn one gemstone by mastering each age-level journey.</div></div>
+  <div class="small">Chapter progress</div><div class="progress"><span id="overall"></span></div><div class="small" id="progressText">0 of 21 milestones mastered</div>
+  <nav id="nav"></nav>
+  <p class="footer">Your learning progress is saved in this browser on this device.</p>
+ </aside>
+ <section class="content">
+  <div class="panel" id="welcome">
+   <span class="tag">YOUR ADVENTURE STARTS HERE</span><h2>Welcome to your learning kingdom!</h2>
+   <p>A percentage is a way of saying <b>“out of 100”</b>. Choose a learning journey and explore the seven topic gates.</p>
+   <div class="row"><div class="stat"><b>🟢 Age 8</b><span class="small">Little Explorer</span></div><div class="stat"><b>🔵 Age 10</b><span class="small">Number Adventurer</span></div><div class="stat"><b>🟣 Age 12</b><span class="small">Master Champion</span></div></div>
+   <div class="callout">Complete all seven topic gates in a journey with <b>100% mastery</b>. Then your gemstone is added to the crown.</div>
+   <div id="flexiAgePicker" class="hidden"></div>
+   <h3>Your seven topic gates</h3><p>Understanding percentage · Fractions and percentage · Percentage of an amount · Word problems · Increase and decrease · Profit and loss · Discount</p>
+   <button class="btn" onclick="openTopic(0)">Begin the quest →</button>
+  </div>
+  <div class="panel hidden" id="lesson"></div>
+  <div class="panel hidden" id="adminDashboard"></div>
+ </section>
+</main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="js/data/chapter-8.js"></script>
+<script src="js/config.js"></script>
+<script src="js/question-engine.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+</body></html>
