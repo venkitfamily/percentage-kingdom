@@ -20,6 +20,11 @@ function openTopic(i){
 }
 function renderLesson(){
  let t=topics[currentTopic],done=completed(key()),el=$("lesson");
+ const ageLesson=t.teach?.[currentAge];
+ if(!ageLesson || ageLesson.length<3){
+  el.innerHTML=`<div class="callout"><b>Lesson content unavailable</b><p>This topic is missing content for Age ${[8,10,12][currentAge]}. Please return to the topic list or contact the administrator.</p></div>`;
+  return;
+ }
  el.innerHTML=`<span class="tag">TOPIC ${currentTopic+1} OF 7</span><h2>${t.name}</h2><p class="muted">Source focus: ${t.source}</p>
  <div class="levels">${learningRoute==='flexi'
  ? ageNames.map((n,i)=>`<button class="${i===currentAge?'active':''}" onclick="setAge(${i})">${['🟢','🔵','🟣'][i]} ${n} · Age ${[8,10,12][i]}</button>`).join('')
